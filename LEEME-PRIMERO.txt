@@ -1,0 +1,80 @@
+============================================================
+   BARDO - SISTEMA DE IMPRESION DE PEDIDOS
+   Guia rapida (no hace falta saber de computacion)
+============================================================
+
+QUE HACE ESTO
+-------------
+Cuando entra un pedido, imprime solo el ticket en la impresora
+termica. Tambien tenes un panel para ver los pedidos del dia.
+
+
+LO QUE NECESITAS UNA SOLA VEZ
+-----------------------------
+1) Una computadora con Windows (la del local).
+2) La impresora termica conectada por USB y encendida.
+3) Tener "Node.js" instalado. Si no lo tenes:
+   - Entra a   https://nodejs.org
+   - Descarga el boton verde grande que dice "LTS"
+   - Instalalo (Siguiente, Siguiente, Listo)
+   (esto necesita internet, pero una sola vez)
+
+
+PASOS PARA DEJARLO ANDANDO (en orden)
+-------------------------------------
+
+PASO 1 - Copiar esta carpeta a la PC del local
+   Copia toda la carpeta "bardo-printer" (por ej. al Escritorio).
+
+PASO 2 - Saber el nombre de la impresora
+   Doble clic en   BUSCAR-IMPRESORA.bat
+   Anota lo que dice en "PortName" de tu impresora (ej: USB001).
+
+PASO 3 - Configurar
+   Abri el archivo   config.txt   (doble clic, se abre en Bloc de notas)
+   En la linea   IMPRESORA=USB001   poni el puerto del paso 2.
+   Guarda (Archivo -> Guardar) y cerra.
+
+PASO 4 - Encender el sistema
+   Doble clic en   INICIAR.bat
+   Se abre una ventana negra. DEJALA ABIERTA. Eso es el sistema andando.
+
+PASO 5 - Probar la impresora
+   Sin cerrar la ventana anterior, doble clic en   PROBAR-IMPRESORA.bat
+   Tiene que salir un ticket de PRUEBA por la impresora.
+   (Si sale: listo, funciona! Si no sale, mira "SI NO IMPRIME" abajo.)
+
+PASO 6 - Ver los pedidos
+   Abri el navegador (Chrome) y entra a:   http://localhost:3001
+   Ahi vas a ver todos los pedidos del dia en tiempo real.
+
+
+USO DE TODOS LOS DIAS
+---------------------
+- Al abrir el local: doble clic en  INICIAR.bat  y dejar la ventana abierta.
+- Al cerrar: cerrar esa ventana.
+- Los pedidos del dia se ven en  http://localhost:3001
+
+
+SI NO IMPRIME (no pasa nada, no se pierde ningun pedido)
+--------------------------------------------------------
+- Revisa que la impresora este ENCENDIDA y con papel.
+- Revisa que el cable USB este bien conectado.
+- Corre de nuevo  BUSCAR-IMPRESORA.bat  y confirma el PortName en config.txt.
+- Proba en config.txt poniendo el nombre en vez del puerto, asi:
+      IMPRESORA=printer:NombreQueAparecioEnBuscar
+  (guarda, cerra INICIAR.bat y volve a abrirlo)
+- Aunque la impresora falle, el pedido igual queda guardado y aparece en
+  el panel. Cada 30 segundos reintenta imprimir solo.
+
+
+ARCHIVOS (para referencia, no hace falta tocarlos)
+--------------------------------------------------
+  INSTALAR.bat          - instala lo necesario (una vez)
+  INICIAR.bat           - enciende el sistema (todos los dias)
+  BUSCAR-IMPRESORA.bat  - muestra el nombre/puerto de la impresora
+  PROBAR-IMPRESORA.bat  - manda un ticket de prueba
+  config.txt            - configuracion (impresora, puerto, PIN)
+  README.md             - explicacion tecnica detallada
+
+============================================================

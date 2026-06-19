@@ -1,0 +1,51 @@
+==========================================================
+   BARDO BURGER - IMPRESION DE PEDIDOS  (pasos en Bardo)
+==========================================================
+
+COMO FUNCIONA AHORA (importante):
+  El cliente pide desde su casa en  bardo-290193021.vercel.app
+  El pedido viaja a la nube (Supabase).
+  ESTA PC pregunta a la nube cada 10s y imprime el ticket solo.
+  -> No hace falta tunel ni nada raro. Solo que ESTA PC tenga
+     internet y la ventana de INICIAR.bat abierta.
+
+
+PASOS LA PRIMERA VEZ (en orden):
+
+  1) INSTALAR.bat   (doble clic)
+       Si falta Node.js, te manda a nodejs.org -> baja "LTS",
+       instalalo (Siguiente, Siguiente, Listo) y volve a abrirlo.
+
+  2) Pegar la CLAVE SECRETA en config.txt   (UNA sola vez)
+       - Abri config.txt con el Bloc de notas.
+       - Entra a:
+         https://supabase.com/dashboard/project/ammbpyjcdjevwdnzezzo/settings/api-keys
+       - Copia la clave "service_role" (la secreta) y pegala
+         despues de  SUPABASE_KEY=
+       - Guarda el archivo.
+       (La URL ya esta puesta, no la toques.)
+
+  3) BUSCAR-IMPRESORA.bat
+       Mira el nombre/puerto de la termica (USB001, USB002...)
+       y ponelo en config.txt despues de  IMPRESORA=
+
+  4) PROBAR-IMPRESORA.bat
+       Tiene que salir un ticket de PRUEBA por la impresora.
+       (ya no hace falta tener INICIAR.bat abierto para probar)
+
+  5) INICIAR.bat
+       Queda corriendo. DEJAR ESTA VENTANA ABIERTA.
+       A partir de aca, los pedidos de la web salen solos.
+
+
+PARA PROBAR DE PUNTA A PUNTA:
+  Con INICIAR.bat abierto, hace un pedido de prueba desde el
+  celu en  bardo-290193021.vercel.app  y fijate que salga el
+  ticket en pocos segundos.
+
+NOTAS:
+  - Si apagan esta PC o cierran INICIAR.bat, los pedidos NO se
+    pierden: quedan guardados en la nube y se imprimen cuando
+    se vuelve a abrir (de las ultimas 24hs).
+  - El pedido tambien sigue llegando por WhatsApp como siempre.
+==========================================================

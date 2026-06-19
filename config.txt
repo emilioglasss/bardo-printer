@@ -1,0 +1,33 @@
+# ============================================
+#  CONFIGURACION DE BARDO  (editar con el Bloc de notas)
+#  Cambia solo lo que esta despues del =  (sin comillas ni espacios de mas).
+#  Despues de guardar: cerra y volve a abrir INICIAR.bat.
+# ============================================
+
+# --------------------------------------------
+#  1) IMPRESORA
+# --------------------------------------------
+# Puerto de la impresora termica. En Windows suele ser USB001, USB002, etc.
+# Corre BUSCAR-IMPRESORA.bat para ver el de TU impresora.
+# Si no anda con el puerto, podes poner:  printer:NombreDeLaImpresora
+IMPRESORA=POS-80C
+
+# --------------------------------------------
+#  2) CONEXION A LA NUBE  (Supabase)
+# --------------------------------------------
+# Esto conecta esta PC con los pedidos de la pagina web.
+# La URL ya esta puesta, NO la cambies.
+SUPABASE_URL=https://ammbpyjcdjevwdnzezzo.supabase.co
+
+# La CLAVE SECRETA va aca abajo. Es como la llave de la caja: NO la compartas
+# ni la subas a internet. Solo vive en esta computadora.
+# Como conseguirla (una sola vez):
+#   1. Entra a:  https://supabase.com/dashboard/project/ammbpyjcdjevwdnzezzo/settings/api-keys
+#   2. Busca la clave "service_role"  (dice "secret")
+#   3. Apreta "Reveal" / el ojito, copiala entera y pegala aca abajo despues del =
+SUPABASE_KEY=
+
+# --------------------------------------------
+#  3) (opcional) cada cuantos segundos revisa si hay pedidos nuevos
+# --------------------------------------------
+INTERVALO=10

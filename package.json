@@ -1,0 +1,15 @@
+{
+  "name": "bardo-printer",
+  "version": "1.0.0",
+  "description": "BARDO BURGER: revisa los pedidos de la web en la nube (Supabase) e imprime el ticket en la impresora termica USB.",
+  "main": "poller.js",
+  "scripts": {
+    "start": "node poller.js"
+  },
+  "dependencies": {
+    "express": "^4.18.0",
+    "cors": "^2.8.5",
+    "node-thermal-printer": "^4.3.0",
+    "fs-extra": "^11.0.0"
+  }
+}

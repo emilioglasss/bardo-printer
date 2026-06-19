@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BARDO — Panel de Pedidos</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@400;600;700&family=Barlow:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --gold:#F5C518; --gold-dark:#C9A000; --black:#0A0A0A; --dark:#111111; --card:#181818;
+    --border:#2A2A2A; --text:#ECECEC; --muted:#888; --green:#4CAF50; --red:#e53935; --orange:#ff9800;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:var(--black);color:var(--text);font-family:'Barlow',sans-serif;min-height:100vh;padding-bottom:40px;}
+
+  header{background:var(--black);border-bottom:2px solid var(--gold);padding:14px 20px;position:sticky;top:0;z-index:10;}
+  .logo{font-family:'Bebas Neue',sans-serif;font-size:2rem;color:var(--gold);letter-spacing:3px;line-height:1;}
+  .logo small{color:var(--muted);font-size:0.85rem;letter-spacing:2px;}
+  .status-dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-left:6px;vertical-align:middle;background:var(--muted);}
+  .resumen{font-family:'Barlow Condensed',sans-serif;color:var(--text);letter-spacing:1px;margin-top:4px;font-size:0.95rem;}
+  .resumen b{color:var(--gold);}
+
+  .filtros{display:flex;gap:8px;padding:12px 20px;flex-wrap:wrap;border-bottom:1px solid var(--border);}
+  .filtro-btn{background:var(--card);border:1px solid var(--border);color:var(--muted);padding:8px 14px;font-family:'Barlow Condensed',sans-serif;font-weight:700;letter-spacing:1px;cursor:pointer;font-size:0.85rem;}
+  .filtro-btn.active{background:var(--gold);color:var(--black);border-color:var(--gold);}
+
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:14px;padding:18px 20px;}
+  .pedido{background:var(--card);border:1px solid var(--border);border-left:4px solid var(--gold);padding:14px 16px;}
+  .pedido.nuevo{animation:parpadeo 1s ease-in-out infinite;}
+  @keyframes parpadeo{
+    0%,100%{border-color:var(--border);border-left-color:var(--gold);box-shadow:0 0 0 rgba(245,197,24,0);}
+    50%{border-color:var(--gold);box-shadow:0 0 16px rgba(245,197,24,0.55);}
+  }
+  .pedido-top{display:flex;justify-content:space-between;align-items:baseline;}
+  .pedido-id{font-family:'Bebas Neue',sans-serif;font-size:1.5rem;color:var(--gold);letter-spacing:1px;}
+  .pedido-turno{font-family:'Bebas Neue',sans-serif;font-size:1.5rem;color:var(--text);}
+  .pedido-turno small{font-size:0.65rem;color:var(--muted);letter-spacing:1px;}
+  .pedido-cliente{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:1.05rem;letter-spacing:0.5px;margin-top:6px;}
+  .pedido-modalidad{font-family:'Barlow Condensed',sans-serif;font-size:0.8rem;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-top:2px;}
+  .pedido-pago{font-family:'Barlow Condensed',sans-serif;font-size:0.82rem;color:var(--gold-dark);letter-spacing:0.5px;margin-top:3px;font-weight:700;}
+  .pedido-items{margin:10px 0;border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:8px 0;}
+  .item{display:flex;justify-content:space-between;gap:8px;font-size:0.92rem;padding:2px 0;font-family:'Barlow Condensed',sans-serif;}
+  .item .precio{color:var(--gold);white-space:nowrap;}
+  .pedido-total{display:flex;justify-content:space-between;font-family:'Bebas Neue',sans-serif;font-size:1.25rem;letter-spacing:1px;}
+  .pedido-total .monto{color:var(--gold);}
+  .medallones{background:rgba(245,197,24,0.10);border:1px dashed var(--gold-dark);color:var(--gold);font-family:'Barlow Condensed',sans-serif;font-weight:700;text-align:center;padding:6px;margin:9px 0;letter-spacing:1px;font-size:0.9rem;}
+  .acl{font-size:0.82rem;color:var(--text);background:#201d10;padding:6px 8px;margin-bottom:9px;font-family:'Barlow Condensed',sans-serif;}
+  .acl b{color:var(--orange);}
+  .estado-badge{display:inline-block;padding:3px 10px;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:0.72rem;letter-spacing:1.5px;text-transform:uppercase;}
+  .e-pendiente{background:#3a2a00;color:var(--gold);}
+  .e-en_preparacion{background:#33291a;color:var(--orange);}
+  .e-listo{background:#0d2a0d;color:var(--green);}
+  .e-entregado{background:#1c1c1c;color:var(--muted);}
+  .acciones{display:flex;gap:6px;margin-top:11px;flex-wrap:wrap;}
+  .btn{flex:1;border:none;padding:11px 8px;font-family:'Barlow Condensed',sans-serif;font-weight:700;letter-spacing:1px;cursor:pointer;font-size:0.8rem;min-width:96px;}
+  .btn-next{background:var(--gold);color:var(--black);}
+  .btn-next:hover{background:var(--gold-dark);}
+  .btn-reimp{background:transparent;border:1px solid var(--muted);color:var(--muted);}
+  .btn-reimp:hover{border-color:var(--gold);color:var(--gold);}
+
+  .vacio{grid-column:1/-1;text-align:center;color:var(--muted);padding:50px 20px;font-family:'Barlow Condensed',sans-serif;letter-spacing:1px;}
+  .vacio .big{font-family:'Bebas Neue',sans-serif;font-size:2.6rem;color:var(--border);display:block;margin-bottom:8px;}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">BARDO <small>· PANEL DE PEDIDOS</small><span class="status-dot" id="statusDot" title="Impresora"></span></div>
+  <div class="resumen" id="resumen">Cargando…</div>
+</header>
+
+<div class="filtros" id="filtros">
+  <button class="filtro-btn active" onclick="setFiltro('todos',this)">TODOS</button>
+  <button class="filtro-btn" onclick="setFiltro('pendientes',this)">PENDIENTES</button>
+  <button class="filtro-btn" onclick="setFiltro('listos',this)">LISTOS</button>
+  <button class="filtro-btn" onclick="setFiltro('entregados',this)">ENTREGADOS</button>
+</div>
+
+<div class="grid" id="grid"><div class="vacio"><span class="big">🍔</span>Cargando pedidos…</div></div>
+
+<script>
+let filtro = 'todos';
+let pedidos = [];
+
+const SIGUIENTE = {
+  pendiente:      { estado:'en_preparacion', label:'EN PREPARACIÓN' },
+  en_preparacion: { estado:'listo',          label:'LISTO' },
+  listo:          { estado:'entregado',      label:'ENTREGADO' }
+};
+const ESTADO_LABEL = { pendiente:'Pendiente', en_preparacion:'En preparación', listo:'Listo', entregado:'Entregado' };
+
+function setFiltro(f, el){
+  filtro = f;
+  document.querySelectorAll('.filtro-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  render();
+}
+
+function fmt(n){ return '$' + Math.round(Number(n)||0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.'); }
+function esNuevo(ts){ return (Date.now() - new Date(ts).getTime()) < 120000; } // < 2 min
+function escapar(s){ return String(s||'').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+
+function pasaFiltro(p){
+  if (filtro === 'todos') return true;
+  if (filtro === 'pendientes') return p.estado === 'pendiente' || p.estado === 'en_preparacion';
+  if (filtro === 'listos') return p.estado === 'listo';
+  if (filtro === 'entregados') return p.estado === 'entregado';
+  return true;
+}
+
+function render(){
+  const grid = document.getElementById('grid');
+  const totalMed = pedidos.reduce((s,p) => s + (p.medallones||0), 0);
+  document.getElementById('resumen').innerHTML =
+    '<b>' + pedidos.length + '</b> pedidos hoy — <b>' + totalMed + '</b> medallones totales';
+
+  const visibles = pedidos.filter(pasaFiltro);
+  if (visibles.length === 0){
+    grid.innerHTML = '<div class="vacio"><span class="big">🍔</span>No hay pedidos ' +
+      (filtro === 'todos' ? 'todavía' : 'en este filtro') + '</div>';
+    return;
+  }
+
+  grid.innerHTML = visibles.map(p => {
+    const idc = String(p.id).slice(-4);
+    const items = (p.items||[]).map(i =>
+      '<div class="item"><span>' + escapar(i.qty + 'x ' + i.nombre) + '</span>' +
+      '<span class="precio">' + (i.precio ? fmt(i.precio*i.qty) : '') + '</span></div>'
+    ).join('');
+    const sig = SIGUIENTE[p.estado];
+    const botonNext = sig ? '<button class="btn btn-next" onclick="cambiarEstado(\'' + p.id + '\',\'' + sig.estado + '\')">' + sig.label + '</button>' : '';
+    const modal = p.modalidad === 'delivery'
+      ? 'DELIVERY · ' + escapar(p.direccion || '(sin dirección)')
+      : 'RETIRO EN LOCAL';
+    const acl = (p.aclaraciones && p.aclaraciones.trim())
+      ? '<div class="acl"><b>Aclaraciones:</b> ' + escapar(p.aclaraciones) + '</div>' : '';
+    const tel = p.telefono ? ' · ' + escapar(p.telefono) : '';
+    const pago = p.pago === 'transferencia'
+      ? '🏦 Transferencia' + (p.alias ? ' · ' + escapar(p.alias) : '')
+      : '🪙 Efectivo';
+    return '<div class="pedido ' + (esNuevo(p.timestamp) ? 'nuevo' : '') + '">' +
+      '<div class="pedido-top"><span class="pedido-id">#' + idc + '</span>' +
+      '<span class="pedido-turno">' + escapar(p.turno || '--:--') + ' <small>HS</small></span></div>' +
+      '<div class="pedido-cliente">' + escapar(p.nombre || '(sin nombre)') + tel + '</div>' +
+      '<div class="pedido-modalidad">' + modal + '</div>' +
+      '<div class="pedido-pago">' + pago + '</div>' +
+      '<div class="pedido-items">' + items + '</div>' +
+      acl +
+      '<div class="pedido-total"><span>TOTAL</span><span class="monto">' + fmt(p.total) + '</span></div>' +
+      '<div class="medallones">🔥 ' + (p.medallones||0) + ' MEDALLONES EN PLANCHA</div>' +
+      '<span class="estado-badge e-' + p.estado + '">' + (ESTADO_LABEL[p.estado] || p.estado) + '</span>' +
+      '<div class="acciones">' + botonNext +
+      '<button class="btn btn-reimp" onclick="reimprimir(\'' + p.id + '\')">🖨 REIMPRIMIR</button></div>' +
+    '</div>';
+  }).join('');
+}
+
+async function cargar(){
+  try{
+    const r = await fetch('/pedidos');
+    pedidos = await r.json();
+    render();
+    // estado de la impresora (puntito verde/rojo)
+    try{
+      const s = await (await fetch('/status')).json();
+      const dot = document.getElementById('statusDot');
+      dot.style.background = s.impresora === 'ok' ? 'var(--green)' : 'var(--red)';
+      dot.title = 'Impresora: ' + s.impresora;
+    }catch(e){}
+  }catch(e){
+    document.getElementById('grid').innerHTML =
+      '<div class="vacio"><span class="big">⚠</span>No se puede conectar al servidor.<br>¿Está corriendo <b>node server.js</b>?</div>';
+  }
+}
+
+async function cambiarEstado(id, estado){
+  try{
+    await fetch('/pedidos/' + id, {
+      method:'PATCH',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({ estado })
+    });
+    cargar();
+  }catch(e){ alert('No se pudo actualizar el pedido'); }
+}
+
+async function reimprimir(id){
+  const pin = prompt('PIN para reimprimir:');
+  if (pin === null) return;
+  try{
+    const r = await fetch('/reimprimir/' + id, { method:'POST', headers:{ 'x-pin': pin } });
+    if (r.status === 401){ alert('PIN incorrecto'); return; }
+    const data = await r.json();
+    alert(data.impreso ? 'Ticket reenviado a la impresora ✓'
+                       : 'No se pudo imprimir (revisá la impresora). El pedido quedó registrado igual.');
+  }catch(e){ alert('Error al reimprimir'); }
+}
+
+cargar();
+setInterval(cargar, 10000); // refresco automatico cada 10 segundos
+</script>
+</body>
+</html>
