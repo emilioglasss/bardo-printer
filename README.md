@@ -1,120 +1,94 @@
-# BARDO BURGER — Sistema de impresión de pedidos
+# BARDO BURGER — Cliente Python de impresión de pedidos
 
-Servidor local que recibe los pedidos de la web e imprime el ticket en la
-impresora térmica USB **automáticamente**. Funciona sin internet (solo la
-web de pedidos necesita conexión).
+Este repositorio ahora usa un cliente local en Python para recibir pedidos de la web
+(vía Supabase REST API) y enviar el ticket a la impresora térmica.
 
----
+## 1. Qué hace ahora
 
-## 1. Requisitos (una sola vez)
+- Lee pedidos nuevos de la tabla `pedidos` en Supabase.
+- Imprime cada pedido en la impresora configurada.
+- Marca el pedido como `impreso=true` en la base de datos.
+- Tiene una interfaz gráfica simple para usuarios no técnicos.
+- Permite configurar todo desde la misma aplicación sin editar archivos.
 
-- **Node.js** instalado en la computadora del local.
-  Descargar de **https://nodejs.org** → botón verde **LTS** → instalar (Siguiente, Siguiente, Listo).
-- **Impresora térmica** conectada por USB y encendida.
+## 2. Requisitos
 
-> **Modo fácil (recomendado):** seguí el archivo **`LEEME-PRIMERO.txt`** y usá
-> los botones de doble clic (`INICIAR.bat`, `BUSCAR-IMPRESORA.bat`,
-> `PROBAR-IMPRESORA.bat`). No hace falta tocar código ni terminal. El resto de
-> este README es la referencia técnica detallada.
+- Python 3.10+ instalado en la PC local.
+- Una impresora térmica o impresora de Windows instalada.
+- Conexión a Internet para hablar con Supabase.
 
-## 2. Instalación (una sola vez)
+## 3. Cómo usarlo
 
-1. Copiar la carpeta `bardo-printer` a la computadora del local (por ejemplo, al Escritorio).
-2. Las dependencias **vienen incluidas** (carpeta `node_modules`), así que normalmente
-   solo necesitás tener Node.js instalado (punto 1).
-3. Si por algún motivo faltan (p. ej. `INICIAR.bat` dice "falta instalar"), doble clic en
-   **`INSTALAR.bat`** y esperá a que termine. *(Eso corre `npm install` y necesita internet una vez.)*
+1. Instala las dependencias:
 
-## 3. Configuración (una sola vez)
-
-La configuración está en **`config.txt`** (se abre con el Bloc de notas). No hace falta tocar el código.
-
-```
-IMPRESORA=USB001      # el puerto de TU impresora (ver abajo)
-PUERTO=3001           # dejar así salvo que 3001 esté ocupado
-PIN=0000              # mismo PIN que la web
-ALIAS=Bardo.esquel    # alias de transferencias (informativo)
+```powershell
+python -m pip install -r requirements.txt
 ```
 
-### ¿Cómo sé el nombre de mi impresora? (IMPRESORA)
+2. Ejecuta la aplicación:
 
-La forma fácil: doble clic en **`BUSCAR-IMPRESORA.bat`** y mirá la columna **PortName**
-de tu impresora térmica (suele ser **USB001**, **USB002**, etc.). Poné ese valor en
-`config.txt` (ej. `IMPRESORA=USB001`), guardá y reabrí `INICIAR.bat`.
-
-A mano: Menú Inicio → **Impresoras y escáneres** → tu impresora → **Propiedades** →
-pestaña **Puertos** → mirá cuál está tildado.
-
-Si con el puerto no imprime, otra opción es **compartir** la impresora en Windows y poner
-su nombre así: `IMPRESORA=printer:NombreDeLaImpresora`. En Linux sería `IMPRESORA=/dev/usb/lp0`.
-
-## 4. Usar todos los días
-
-1. Doble clic en **`INICIAR.bat`**.
-2. **Dejar esa ventana abierta todo el día.** Mientras esté abierta, los pedidos se imprimen solos.
-3. Para ver los pedidos del día en pantalla: abrir el navegador y entrar a **http://localhost:3001**
-4. Para probar la impresora cuando quieras: doble clic en **`PROBAR-IMPRESORA.bat`** (con `INICIAR.bat` abierto).
-
-Al cerrar el local: cerrá la ventana de `INICIAR.bat`.
-
-*(Técnicamente `INICIAR.bat` corre `node server.js`; podés hacerlo a mano desde una terminal si preferís.)*
-
-## 5. El panel de pedidos (http://localhost:3001)
-
-- Se actualiza solo **cada 10 segundos**.
-- Cada pedido muestra: número, turno, cliente, modalidad, items, total y **medallones en plancha**.
-- Botones para ir moviendo el pedido: **EN PREPARACIÓN → LISTO → ENTREGADO**.
-- Filtros arriba: **TODOS / PENDIENTES / LISTOS / ENTREGADOS**.
-- Arriba se ve el total de **pedidos** y de **medallones** del día.
-- Los pedidos nuevos (últimos 2 minutos) **parpadean en dorado**.
-- Botón **REIMPRIMIR** en cada pedido (pide el PIN `0000`).
-- El puntito al lado del título es **verde** si la impresora responde, **rojo** si no.
-
-## 6. Si la impresora no imprime
-
-El sistema **nunca pierde un pedido**, aunque la impresora falle:
-- El pedido igual queda guardado y aparece en el panel.
-- Cada **30 segundos** reintenta imprimir los que quedaron pendientes.
-- Mientras tanto, el ticket se muestra en la ventana de la Terminal.
-
-Qué revisar:
-1. Que la impresora esté **encendida** y con papel.
-2. Que el cable **USB** esté bien conectado.
-3. Que `NOMBRE_IMPRESORA` en `server.js` sea el correcto (ver punto 3).
-4. Cerrar la ventana de la Terminal y volver a ejecutar `node server.js`.
-
-## 7. Conexión con la web de pedidos
-
-La web `bardo-pedidos.html` **ya está conectada**: cuando un cliente confirma el
-pedido, además de abrir WhatsApp le avisa a este servidor para imprimir. Apunta a
-`http://localhost:3001/nuevo-pedido` (es "fire-and-forget": si el servidor está
-apagado, el pedido por WhatsApp se manda igual).
-
-> **⚠ Importante si la web está publicada en Netlify (https):**
-> Algunos navegadores bloquean que una página `https://` le hable a
-> `http://localhost`. Si ves que los pedidos llegan por WhatsApp pero **no se
-> imprimen solos**, no se pierde nada: el local los imprime desde el panel con el
-> botón **REIMPRIMIR**, o se abre la web localmente. El pedido siempre queda registrado.
-
-## Estructura de archivos
-
-```
-bardo-printer/
-├── server.js        ← servidor principal (config arriba de todo)
-├── printer.js       ← cómo se arma e imprime el ticket
-├── package.json     ← lista de dependencias
-├── pedidos.json     ← base de datos del día (se crea solo)
-├── public/
-│   └── index.html   ← el panel de pedidos
-└── README.md        ← este archivo
+```powershell
+python bardo_printer.py
 ```
 
-## Endpoints (referencia técnica)
+3. En la ventana, completa los datos de configuración:
+- `Supabase URL`
+- `Clave Supabase`
+- `Intervalo (s)`
+- `Impresora`
 
-| Método | Ruta | Para qué |
-|--------|------|----------|
-| POST | `/nuevo-pedido` | la web manda un pedido nuevo |
-| GET | `/pedidos` | pedidos de hoy (opcional `?estado=pendiente`) |
-| PATCH | `/pedidos/:id` | cambiar estado `{ "estado": "listo" }` |
-| POST | `/reimprimir/:id` | reimprimir (header `x-pin: 0000`) |
-| GET | `/status` | estado del sistema e impresora |
+4. Presiona `Guardar configuración`.
+5. Presiona `Iniciar servicio`.
+6. Usa `Probar impresora` para verificar la impresión.
+
+## 4. Configuración desde la UI
+
+La aplicación tiene un panel donde podés:
+
+- seleccionar la impresora instalada
+- cargar la lista de impresoras de Windows
+- elegir la impresora y guardar la selección
+- escribir la URL y la clave de Supabase
+- cambiar el intervalo de chequeo
+
+No es necesario editar `config.txt` manualmente.
+
+## 5. Uso avanzado con `config.txt`
+
+Si preferís, la aplicación puede guardar la configuración en `config.txt`.
+Tras completar y guardar desde la UI, ese archivo queda disponible para
+cargas posteriores.
+
+## 6. Generar el ejecutable `.exe`
+
+Para crear un `.exe` listo para usar:
+
+1. Asegurate de tener las dependencias instaladas:
+
+```powershell
+python -m pip install -r requirements.txt
+```
+
+2. Ejecuta el script de build:
+
+```powershell
+build_exe.bat
+```
+
+3. El ejecutable se genera en `dist\bardo_printer.exe`.
+
+4. Copia `bardo_printer.exe` y, si querés,
+   `config.txt` al mismo directorio para conservar la configuración.
+
+## 7. Archivos principales
+
+- `bardo_printer.py` — cliente Python principal.
+- `requirements.txt` — dependencias necesarias.
+- `build_exe.bat` — automatiza la creación del `.exe`.
+
+## 8. Si la impresora no imprime
+
+- Verifica que la impresora esté encendida y conectada.
+- Presiona `Cargar impresoras` y selecciona el nombre correcto.
+- Si la impresora está instalada en Windows, usa `printer:NombreDeLaImpresora`.
+- Si falla, el log en la aplicación mostrará el error de PowerShell.

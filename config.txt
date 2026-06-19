@@ -25,7 +25,7 @@ SUPABASE_URL=https://ammbpyjcdjevwdnzezzo.supabase.co
 #   1. Entra a:  https://supabase.com/dashboard/project/ammbpyjcdjevwdnzezzo/settings/api-keys
 #   2. Busca la clave "service_role"  (dice "secret")
 #   3. Apreta "Reveal" / el ojito, copiala entera y pegala aca abajo despues del =
-SUPABASE_KEY=
+SUPABASE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFtbWJweWpjZGpldndkbnplenpvIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc4MTEwMzg2NywiZXhwIjoyMDk2Njc5ODY3fQ.JOJQZIwwZN5EqNYKGZ1PP2DFUlbpmWIGHnFEfiEYhec
 
 # --------------------------------------------
 #  3) (opcional) cada cuantos segundos revisa si hay pedidos nuevos

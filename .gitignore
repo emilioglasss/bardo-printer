@@ -1,3 +1,5 @@
 node_modules/
 pedidos.json
 *.log
+__pycache__/
+*.pyc
